@@ -1,5 +1,4 @@
 # 🐱 Projet Écosystème Animalier
-# Système de Gestion Écologique - Faune & Habitats
 
 Cette application Java a été développée pour enseigner les principes de base de la **Programmation Orientée Objet (POO)** et des **tests unitaires automatisés**. Elle représente un écosystème virtuel où des animaux interagissent avec leur environnement.
 
