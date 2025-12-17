@@ -1,135 +1,135 @@
 # TP3 — Scénario agile intégré (Animal / Habitat)
 
-Ce dépôt illustre un scénario agile **intégré** (User Stories → tests exécutables → code → exécution automatique → archivage Git).
+Ce dépôt illustre un **scénario agile intégré** conforme au TP3 du cours *Management de Projet et Agilité*.
 
-- Langage : Python
-- Tests : pytest
-- Domaine : Animal / Habitat (exemple évolutif)
+L’objectif est de montrer comment des **User Stories** peuvent devenir des **spécifications exécutables**, grâce à une combinaison de **BDD (Cucumber/Behave)**, de **tests automatisés** et d’un **code évolutif**.
 
 ---
 
-## 1) Pré-requis
+## 1) Objectifs pédagogiques
 
-- Python **3.11+**
-- VSCode (recommandé)
+- Exprimer les exigences sous forme de **User Stories**.
+- Traduire les critères d’acceptation en **scénarios exécutables (Given / When / Then)**.
+- Garantir la **stabilité du système** via des tests automatisés.
+- Illustrer un **cycle de vie agile complet** : besoin → test → code → exécution → évolution.
 
 ---
 
-## 2) Structure du projet
+## 2) Technologies utilisées
+
+- **Langage** : Python 3
+- **BDD / Cucumber** : `behave` (syntaxe Gherkin)
+- **Tests automatisés** : pytest (tests unitaires)
+- **IDE** : VSCode
+- **Versionnement** : Git
+
+---
+
+## 3) Structure du projet
 
 ```text
 .
 ├── src/
-│   ├── animal.py
-│   └── habitat.py
-├── tests/
+│   ├── animal.py          # Modèle métier Animal
+│   └── habitat.py         # Modèle métier Habitat
+│
+├── tests/                 # Tests unitaires (pytest)
 │   ├── test_us01_basic_animal.py
 │   ├── test_us02_habitat_daily_needs.py
 │   └── test_us03_survival_and_move.py
-├── USER_STORIES.md
+│
+├── features/              # Tests BDD (Cucumber / Behave)
+│   ├── animal_habitat.feature
+│   └── steps/
+│       └── animal_steps.py
+│
+├── USER_STORIES.md        # User Stories et critères d’acceptation
 └── README.md
 ```
 
 ---
 
-## 3) Installation (environnement virtuel)
+## 4) Installation
 
-### macOS / Linux
+### Création d’un environnement virtuel
 
 ```bash
 python -m venv .venv
+```
+
+Activation :
+
+- macOS / Linux
+```bash
 source .venv/bin/activate
-pip install -U pip
-pip install pytest
 ```
 
-### Windows (PowerShell)
-
+- Windows (PowerShell)
 ```powershell
-python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -U pip
-pip install pytest
+```
+
+### Installation des dépendances
+
+```bash
+pip install -U pip
+pip install pytest behave
 ```
 
 ---
 
-## 4) Exécuter les tests automatiquement
+## 5) Exécution des tests
 
-Depuis la racine du projet :
+### Tests unitaires (pytest)
 
 ```bash
 pytest -q
 ```
 
-Optionnel (sortie plus détaillée) :
+### Tests BDD / Cucumber (behave)
 
 ```bash
-pytest -vv
+behave
 ```
 
----
-
-## 5) User Stories → Tests (traçabilité)
-
-Les **User Stories** et leurs **critères d’acceptation** sont décrits dans :
-
-- `USER_STORIES.md`
-
-Chaque critère d’acceptation est couvert par des tests exécutables dans :
-
-- `tests/test_us01_basic_animal.py`
-- `tests/test_us02_habitat_daily_needs.py`
-- `tests/test_us03_survival_and_move.py`
+Chaque **Scenario** correspond à une User Story ou à un critère d’acceptation.
 
 ---
 
-## 6) Règles de contribution (mode agile)
+## 6) Traçabilité agile (User Stories → Tests → Code)
 
-- Implémenter une User Story par petites étapes.
-- Écrire/mettre à jour les tests avant ou pendant l’implémentation.
-- Garder la suite de tests **verte** (aucune régression).
+- Les **User Stories** sont décrites dans `USER_STORIES.md`.
+- Chaque critère d’acceptation est couvert :
+  - soit par un test **pytest** (niveau unitaire),
+  - soit par un scénario **Cucumber / Behave** (niveau comportemental).
 
----
-
-## 7) Archivage Git (recommandé)
-
-Exemple de cycle minimal :
-
-```bash
-git init
-git add .
-git commit -m "init: structure + US + tests"
-
-# Après US01
-pytest -q
-git add .
-git commit -m "US01: animal basic actions + tests"
-
-git tag v0.1-us01
-
-# Après US02
-pytest -q
-git add .
-git commit -m "US02: daily needs by habitat + tests"
-
-git tag v0.2-us02
-
-# Après US03
-pytest -q
-git add .
-git commit -m "US03: move + survival + tests"
-
-git tag v0.3-us03
-```
+Ainsi, les scénarios `.feature` jouent le rôle de **spécifications exécutables**, lisibles aussi bien par les développeurs que par des acteurs non techniques.
 
 ---
 
-## 8) Dépannage
+## 7) Cycle agile illustré
 
-- **`pytest: command not found`**
-  - Vérifier que l’environnement virtuel est activé (`source .venv/bin/activate` ou `Activate.ps1`).
+1. Rédaction des User Stories
+2. Définition des scénarios BDD (Given / When / Then)
+3. Implémentation du code métier
+4. Exécution automatique des tests
+5. Validation (barre verte)
+6. Évolution ou correction sans régression
 
-- **ImportError sur `src.*`**
-  - Lancer `pytest` depuis la **racine** du projet.
+---
 
+## 8) Archivage et reproductibilité
+
+Le projet est conçu pour être :
+
+- versionné avec Git,
+- exécutable sur toute machine disposant de Python,
+- reproductible grâce aux tests automatisés.
+
+Chaque évolution fonctionnelle peut être associée à un commit et, si nécessaire, à un tag de version.
+
+---
+
+## 9) Conclusion
+
+Ce TP met en œuvre les principes clés de l’agilité : **feedback rapide**, **qualité intégrée**, **tests automatisés** et **évolution contrôlée du code**, en s’appuyant sur des User Stories devenues directement exécutables.
