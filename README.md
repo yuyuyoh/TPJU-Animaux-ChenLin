@@ -1,108 +1,87 @@
 # 🐱 Projet Écosystème Animalier
 
-
 **Équipe :** CHEN Yuxuan & LIN Hongxiang  
-**Contexte académique :**  - Module Agilité - Travaux pratiques sur les tests unitaires
+**Contexte académique :** Module Agilité - Travaux pratiques sur les tests unitaires
 
-Cette application Java a été développée pour enseigner les principes de base de la **Programmation Orientée Objet (POO)** et des **tests unitaires automatisés**. Elle représente un écosystème virtuel où des animaux interagissent avec leur environnement.
-
-Conçu spécifiquement pour **BlueJ**, ce projet favorise l'apprentissage expérientiel grâce à la manipulation directe d'objets et à la visualisation immédiate des effets des opérations.
+Cette application Java simule un écosystème où des animaux interagissent avec leur environnement. Elle met en pratique les concepts de **Programmation Orientée Objet (POO)** et prépare le terrain pour des **tests unitaires automatisés**.
 
 ---
 
 ## 🎯 Objectif du Projet
 
-Le système repose sur l'interaction entre deux entités principales : les animaux et leurs habitats. Il permet d'explorer divers mécanismes orientés objet à travers des simulations biologiques réalistes.
+Le système gère l'état vital des animaux et leur localisation. Contrairement à une simple base de données, il intègre des **règles métier** basées sur les fichiers `Animal.java` et `Habitat.java`, comme le coût énergétique des actions et les besoins de survie selon le milieu.
 
 ### Capacités offertes :
-* **Représentation d'entités :** Génération dynamique d'animaux et de leurs milieux de vie.
-* **Simulation comportementale :** Gestion des besoins énergétiques via l'alimentation.
-* **Contrôle d'intégrité :** Validation des données d'entrée (valeurs négatives interdites).
-* **Connexion inter-classes :** Établissement de relations entre un animal et son habitat.
-* **Fonctionnalités collaboratives :** Méthodes exploitant simultanément les propriétés des deux types d'objets.
+* **Cycle de vie :** Gestion du vieillissement (`age`) et de la dépense énergétique associée.
+* **Dynamique environnementale :** Déplacement entre différents habitats avec un coût de 10 unités d'énergie.
+* **Calcul de survie :** Évaluation des besoins quotidiens basés spécifiquement sur le type d'habitat.
+* **Robustesse :** Protection contre les données invalides via des exceptions (ex: `IllegalArgumentException` pour les quantités alimentaires négatives).
 
 ---
 
 ## 🏗 Structure des Classes
 
-### 1. Classe `Animal` (Classe fétiche)
-Cette classe constitue le cœur de l'application.
-* **Caractéristiques :**
-    * `nom` (String) : Désignation de l'animal.
-    * `energie` (int) : Niveau vital, défini à l'initialisation.
-    * `habitat` (Habitat) : Référence optionnelle vers l'environnement (relation 0..1).
-* **Fonctions principales :**
-    * `seNourrir(int quantite)` : Augmente le niveau d'énergie. Génère une exception si `quantite < 0`.
-    * `definirHabitat(Habitat h)` : Établit la connexion avec un habitat.
-    * `obtenirDescription()` : Produit un résumé textuel incluant l'état et le milieu.
+### 1. Classe `Animal`
+C'est le moteur de la simulation. Elle contient l'état de santé et la logique comportementale.
+* **Attributs :**
+    * `name` (String) : Identifiant de l'animal.
+    * `energy` (int) : Niveau vital nécessaire pour agir.
+    * `age` (int) : Initialisé à 0, il augmente avec le temps.
+    * `habitat` (Habitat) : Référence vers l'environnement actuel.
+* **Méthodes clés :**
+    * `eat(int amount)` : Augmente l'énergie.
+    * `growOld()` : Augmente l'âge et consomme **5 unités d'énergie**.
+    * `moveTo(Habitat h)` : Change d'habitat au prix de **10 unités d'énergie** si `energy >= 10`.
+    * `calculateDailyNeeds()` : Détermine l'énergie requise selon le type (`Desert`, `Forest`, `Savanna`).
 
 ### 2. Classe `Habitat`
 Modélise le contexte environnemental.
-* **Caractéristiques :**
-    * `type` (String) : Catégorie d'habitat (ex: "Savane", "Forêt tropicale").
-* **Fonction essentielle :**
-    * `obtenirType()` : Renvoie la classification de l'habitat.
-### 🔄 Logique de Simulation
-
-Le comportement des objets suit des règles métier précises :
-
-#### **Gestion de l'énergie :**
-- **Alimentation** : `eat(int amount)` → `énergie = énergie + quantité`
-  - Contrainte : `quantité ≥ 0` (sinon `IllegalArgumentException`)
-- **Modification directe** : `setEnergy(int value)` permet un ajustement manuel
-
-#### **Gestion des habitats :**
-- **Association** : `moveTo(Habitat h)` ou `setHabitat(Habitat h)` → `habitat = h`
-- **Désassociation** : `leaveHabitat()` → `habitat = null`
-- **Vérification** : `hasHabitat()` retourne `true` si `habitat ≠ null`
-
-#### **Génération de descriptions :**
-
-La méthode `describe()` implémente une logique conditionnelle qui produit une description textuelle différenciée selon l'état de l'animal, en particulier sa relation avec un habitat.
-
+* **Attributs :**
+    * `type` (String) : Catégorie de l'habitat.
+* **Méthodes :**
+    * `getType()` : Utilisé par l'animal pour ajuster sa consommation d'énergie.
+    * `toString()` : Retourne le type pour l'affichage textuel.
 
 ---
 
-## 🔄 Relations Inter-classes
+## 🔄 Logique de Simulation & Règles Métier
 
-L'implémentation établit une **connexion unidirectionnelle** respectant une cardinalité **0..1 à 0..1**.
-* L'`Animal` maintient une référence vers son `Habitat` via l'attribut `habitat`.
-* L'`Habitat` n'enregistre pas d'information sur l'animal, préservant le caractère unidirectionnel.
-* La cardinalité est strictement appliquée : un animal possède **zéro ou un** habitat ; un habitat héberge **zéro ou un** animal dans ce modèle simplifié.
+Le comportement des objets suit des règles précises pour simuler la survie :
 
----
-
-## 🧪 Validation par Tests Unitaires (JUnit) - À implémenter
-
-La robustesse du code sera vérifiée via la classe `TestsAnimal`. Une méthode `preparer()` (@Before) initialisera un contexte de test reproductible (un animal "Lion" et un habitat "Savane").
-
-| Cas de Test | Objectif | Comportement attendu |
+#### **Gestion de l'Énergie**
+| Action | Impact Énergétique | Condition de réussite |
 | :--- | :--- | :--- |
-| **Initialisation** | Contrôler l'état post-construction. | Énergie conforme, Habitat à `null`. |
-| **Nutrition** | Vérifier l'effet de l'alimentation. | 50 + 20 = 70 unités d'énergie. |
-| **Nutrition invalide** | Tester une entrée négative (-5). | Exception `IllegalArgumentException`. |
-| **Liaison Habitat** | Valider l'association via `definirHabitat()`. | Description mentionne l'habitat. |
-| **Description isolée** | Décrire un animal sans habitat. | Message "est sans habitat attitré". |
+| **Manger (`eat`)** | `+ amount` | `amount >= 0` |
+| **Vieillir (`growOld`)** | `- 5` | Toujours possible (minimum 0) |
+| **Se déplacer (`moveTo`)** | `- 10` | `energy >= 10` |
+
+#### **Calcul des besoins quotidiens (`calculateDailyNeeds`)**
+La survie est plus ou moins difficile selon le milieu :
+* **Sans habitat** : 20 unités.
+* **En Forêt (`Forest`)** : 25 unités.
+* **En Savane (`Savanna`)** : 30 unités.
+* **En Désert (`Desert`)** : 40 unités.
+
+---
+
+## 🧪 Plan de Validation (JUnit)
+
+La robustesse du code peut être vérifiée par les scénarios suivants basés sur les méthodes implémentées :
+
+| Cas de Test | Objectif | Résultat attendu |
+| :--- | :--- | :--- |
+| **Initialisation** | Vérifier l'état post-construction. | `age` = 0, `habitat` = `null`. |
+| **Alimentation** | Vérifier l'ajout d'énergie. | L'énergie augmente du montant spécifié. |
+| **Nutrition invalide** | Tester une entrée négative. | Lancement d'une `IllegalArgumentException`. |
+| **Déplacement** | Valider le coût du mouvement. | Habitat mis à jour et énergie réduite de 10. |
+| **Description** | Tester la méthode `describe()`. | Chaîne incluant le nom, l'énergie et l'habitat. |
 
 ---
 
 ## 🖥 Guide d'Utilisation BlueJ
 
-Le projet tire parti des spécificités de BlueJ pour :
-1.  **Génération visuelle** : Menu contextuel → `nouvel Animal("Lion", 100)`.
-2.  **Inspection en direct** : Visualisation des attributs et références.
-3.  **Exécution pas à pas** : Appel graphique de méthodes comme `seNourrir(30)`.
-4.  **Validation continue** : Les classes sans motif hachuré indiquent une compilation réussie.
+1. **Génération visuelle** : Faites un clic droit sur les classes pour créer des instances (ex: `new Animal("Simba", 50)`).
+2. **Liaison d'objets** : Pour la méthode `moveTo(Habitat h)`, cliquez sur l'instance de l'habitat présente sur l'établi d'objets.
+3. **Inspection** : Utilisez l'inspecteur pour voir l'évolution de l'attribut `energy` après avoir appelé `growOld()` ou `eat()`.
 
-> **Remarque pédagogique :** Dans BlueJ, les paramètres de type `String` doivent impérativement être **saisis entre guillemets** (ex: `"Savane"`). L'omission des guillemets provoque une erreur d'interprétation.
-
----
-
-## 🚧 Perspectives d'Évolution
-
-1.  **Relation bidirectionnelle** : Étendre le modèle pour que l'Habitat référence ses habitants (0..1 à *).
-2.  **Restructuration** : Appliquer des techniques de refactoring (`Renommer`, `ExtraireMethode`).
-3.  **Tests avancés** : Automatisation en ligne de commande et exploration des bonnes pratiques JUnit.
-
-
-
+> **Rappel technique :** Les types `String` dans BlueJ doivent être saisis entre guillemets (ex: `"Forest"`).
