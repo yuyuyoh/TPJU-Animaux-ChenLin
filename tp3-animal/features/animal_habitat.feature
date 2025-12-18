@@ -1,8 +1,8 @@
 Feature: US_001 Animal et Habitat
 
-  En tant que système
-  Je veux gérer des animaux et leurs habitats
-  Afin de garantir des comportements cohérents et vérifiables
+ En tant que Gardien de l'Équilibre
+ Je veux veiller sur chaque créature et chaque terre de mon royaume,
+ Afin que l'harmonie règne entre le code et la nature
 
   # --------------------------------------------------
   # US01 — Gérer un animal (état et actions de base)
