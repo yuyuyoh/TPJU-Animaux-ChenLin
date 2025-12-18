@@ -1,135 +1,87 @@
-# TP3 — Scénario agile intégré (Animal / Habitat)
+# 🐱 Projet Écosystème Animalier
 
-Ce dépôt illustre un **scénario agile intégré** conforme au TP3 du cours *Management de Projet et Agilité*.
+**Équipe :** CHEN Yuxuan & LIN Hongxiang  
+**Contexte académique :** Module Agilité - Travaux pratiques sur les tests unitaires
 
-L’objectif est de montrer comment des **User Stories** peuvent devenir des **spécifications exécutables**, grâce à une combinaison de **BDD (Cucumber/Behave)**, de **tests automatisés** et d’un **code évolutif**.
-
----
-
-## 1) Objectifs pédagogiques
-
-- Exprimer les exigences sous forme de **User Stories**.
-- Traduire les critères d’acceptation en **scénarios exécutables (Given / When / Then)**.
-- Garantir la **stabilité du système** via des tests automatisés.
-- Illustrer un **cycle de vie agile complet** : besoin → test → code → exécution → évolution.
+Cette application Java simule un écosystème où des animaux interagissent avec leur environnement. Elle met en pratique les concepts de **Programmation Orientée Objet (POO)** et prépare le terrain pour des **tests unitaires automatisés**.
 
 ---
 
-## 2) Technologies utilisées
+## 🎯 Objectif du Projet
 
-- **Langage** : Python 3
-- **BDD / Cucumber** : `behave` (syntaxe Gherkin)
-- **Tests automatisés** : pytest (tests unitaires)
-- **IDE** : VSCode
-- **Versionnement** : Git
+Le système gère l'état vital des animaux et leur localisation. Contrairement à une simple base de données, il intègre des **règles métier** basées sur les fichiers `Animal.java` et `Habitat.java`, comme le coût énergétique des actions et les besoins de survie selon le milieu.
 
----
-
-## 3) Structure du projet
-
-```text
-.
-├── src/
-│   ├── animal.py          # Modèle métier Animal
-│   └── habitat.py         # Modèle métier Habitat
-│
-├── tests/                 # Tests unitaires (pytest)
-│   ├── test_us01_basic_animal.py
-│   ├── test_us02_habitat_daily_needs.py
-│   └── test_us03_survival_and_move.py
-│
-├── features/              # Tests BDD (Cucumber / Behave)
-│   ├── animal_habitat.feature
-│   └── steps/
-│       └── animal_steps.py
-│
-├── USER_STORIES.md        # User Stories et critères d’acceptation
-└── README.md
-```
+### Capacités offertes :
+* **Cycle de vie :** Gestion du vieillissement (`age`) et de la dépense énergétique associée.
+* **Dynamique environnementale :** Déplacement entre différents habitats avec un coût de 10 unités d'énergie.
+* **Calcul de survie :** Évaluation des besoins quotidiens basés spécifiquement sur le type d'habitat.
+* **Robustesse :** Protection contre les données invalides via des exceptions (ex: `IllegalArgumentException` pour les quantités alimentaires négatives).
 
 ---
 
-## 4) Installation
+## 🏗 Structure des Classes
 
-### Création d’un environnement virtuel
+### 1. Classe `Animal`
+C'est le moteur de la simulation. Elle contient l'état de santé et la logique comportementale.
+* **Attributs :**
+    * `name` (String) : Identifiant de l'animal.
+    * `energy` (int) : Niveau vital nécessaire pour agir.
+    * `age` (int) : Initialisé à 0, il augmente avec le temps.
+    * `habitat` (Habitat) : Référence vers l'environnement actuel.
+* **Méthodes clés :**
+    * `eat(int amount)` : Augmente l'énergie.
+    * `growOld()` : Augmente l'âge et consomme **5 unités d'énergie**.
+    * `moveTo(Habitat h)` : Change d'habitat au prix de **10 unités d'énergie** si `energy >= 10`.
+    * `calculateDailyNeeds()` : Détermine l'énergie requise selon le type (`Desert`, `Forest`, `Savanna`).
 
-```bash
-python -m venv .venv
-```
-
-Activation :
-
-- macOS / Linux
-```bash
-source .venv/bin/activate
-```
-
-- Windows (PowerShell)
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-### Installation des dépendances
-
-```bash
-pip install -U pip
-pip install pytest behave
-```
+### 2. Classe `Habitat`
+Modélise le contexte environnemental.
+* **Attributs :**
+    * `type` (String) : Catégorie de l'habitat.
+* **Méthodes :**
+    * `getType()` : Utilisé par l'animal pour ajuster sa consommation d'énergie.
+    * `toString()` : Retourne le type pour l'affichage textuel.
 
 ---
 
-## 5) Exécution des tests
+## 🔄 Logique de Simulation & Règles Métier
 
-### Tests unitaires (pytest)
+Le comportement des objets suit des règles précises pour simuler la survie :
 
-```bash
-pytest -q
-```
+#### **Gestion de l'Énergie**
+| Action | Impact Énergétique | Condition de réussite |
+| :--- | :--- | :--- |
+| **Manger (`eat`)** | `+ amount` | `amount >= 0` |
+| **Vieillir (`growOld`)** | `- 5` | Toujours possible (minimum 0) |
+| **Se déplacer (`moveTo`)** | `- 10` | `energy >= 10` |
 
-### Tests BDD / Cucumber (behave)
-
-```bash
-behave
-```
-
-Chaque **Scenario** correspond à une User Story ou à un critère d’acceptation.
-
----
-
-## 6) Traçabilité agile (User Stories → Tests → Code)
-
-- Les **User Stories** sont décrites dans `USER_STORIES.md`.
-- Chaque critère d’acceptation est couvert :
-  - soit par un test **pytest** (niveau unitaire),
-  - soit par un scénario **Cucumber / Behave** (niveau comportemental).
-
-Ainsi, les scénarios `.feature` jouent le rôle de **spécifications exécutables**, lisibles aussi bien par les développeurs que par des acteurs non techniques.
+#### **Calcul des besoins quotidiens (`calculateDailyNeeds`)**
+La survie est plus ou moins difficile selon le milieu :
+* **Sans habitat** : 20 unités.
+* **En Forêt (`Forest`)** : 25 unités.
+* **En Savane (`Savanna`)** : 30 unités.
+* **En Désert (`Desert`)** : 40 unités.
 
 ---
 
-## 7) Cycle agile illustré
+## 🧪 Plan de Validation (JUnit)
 
-1. Rédaction des User Stories
-2. Définition des scénarios BDD (Given / When / Then)
-3. Implémentation du code métier
-4. Exécution automatique des tests
-5. Validation (barre verte)
-6. Évolution ou correction sans régression
+La robustesse du code peut être vérifiée par les scénarios suivants basés sur les méthodes implémentées :
 
----
-
-## 8) Archivage et reproductibilité
-
-Le projet est conçu pour être :
-
-- versionné avec Git,
-- exécutable sur toute machine disposant de Python,
-- reproductible grâce aux tests automatisés.
-
-Chaque évolution fonctionnelle peut être associée à un commit et, si nécessaire, à un tag de version.
+| Cas de Test | Objectif | Résultat attendu |
+| :--- | :--- | :--- |
+| **Initialisation** | Vérifier l'état post-construction. | `age` = 0, `habitat` = `null`. |
+| **Alimentation** | Vérifier l'ajout d'énergie. | L'énergie augmente du montant spécifié. |
+| **Nutrition invalide** | Tester une entrée négative. | Lancement d'une `IllegalArgumentException`. |
+| **Déplacement** | Valider le coût du mouvement. | Habitat mis à jour et énergie réduite de 10. |
+| **Description** | Tester la méthode `describe()`. | Chaîne incluant le nom, l'énergie et l'habitat. |
 
 ---
 
-## 9) Conclusion
+## 🖥 Guide d'Utilisation BlueJ
 
-Ce TP met en œuvre les principes clés de l’agilité : **feedback rapide**, **qualité intégrée**, **tests automatisés** et **évolution contrôlée du code**, en s’appuyant sur des User Stories devenues directement exécutables.
+1. **Génération visuelle** : Faites un clic droit sur les classes pour créer des instances (ex: `new Animal("Simba", 50)`).
+2. **Liaison d'objets** : Pour la méthode `moveTo(Habitat h)`, cliquez sur l'instance de l'habitat présente sur l'établi d'objets.
+3. **Inspection** : Utilisez l'inspecteur pour voir l'évolution de l'attribut `energy` après avoir appelé `growOld()` ou `eat()`.
+
+> **Rappel technique :** Les types `String` dans BlueJ doivent être saisis entre guillemets (ex: `"Forest"`).
